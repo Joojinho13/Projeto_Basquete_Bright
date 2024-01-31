@@ -8,9 +8,6 @@ public class GameController : MonoBehaviour
 {
     public AttackerController player;
 
-    public float resetTimer;
-
-
     void Start()
     {
         
@@ -18,13 +15,18 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if (player.holdingBall == false)
+        if (Input.GetKeyDown(KeyCode.F1))
         {
-            resetTimer -= Time.deltaTime;
-            if(resetTimer <= 0)
-            {
-                SceneManager.LoadScene ("GameScene");
-            }
+            ResetScene();
         }
+    }
+
+    void ResetScene()
+    {
+        // Obtém o índice da cena atual
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        // Carrega a cena atual novamente
+        SceneManager.LoadScene(currentSceneIndex);
     }
 }

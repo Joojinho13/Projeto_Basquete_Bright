@@ -2,53 +2,53 @@ using UnityEngine;
 
 public class AttackerController : MonoBehaviour
 {
-    public GameObject ball;
-    public bool holdingBall = true;
-    public float maxThrowingForce = 100f;
-    public float accuracyFactor = 0.2f;
-    public float randomFactor = 0.1f;
+    public GameObject bola;
+    public bool segurandoBola = true;
+    public float forcaMaximaArremesso = 100f;
 
-    private Vector3 dragStartPosition;
-    private Vector3 dragEndPosition;
+    private Vector3 posicaoInicialArrasto;
+    private Vector3 posicaoFinalArrasto;
 
     void Start()
     {
-        ball.GetComponent<Rigidbody>().useGravity = false;
+        bola.GetComponent<Rigidbody>().useGravity = false;
     }
 
     void Update()
     {
-       
-        if (holdingBall)
+        if (segurandoBola)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                dragStartPosition = Input.mousePosition;
-            }
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                holdingBall = false;
-                ball.GetComponent<Rigidbody>().useGravity = true;
-
-                dragEndPosition = Input.mousePosition;
-                Vector3 dragDirection = (dragEndPosition - dragStartPosition).normalized;
-
-                float throwingForce = Mathf.Clamp((dragEndPosition - dragStartPosition).magnitude, 0f, maxThrowingForce);
-                throwingForce *= 1 + Random.Range(-randomFactor, randomFactor);
-
-                float upwardForce = throwingForce * 0.5f; // Ajuste conforme necessário
-                float forwardForce = throwingForce * 2f; // Ajuste conforme necessário
-
-                Vector3 throwForce = new Vector3(dragDirection.x * forwardForce * 50, upwardForce * 50, dragDirection.y * forwardForce* 50);
-
-                // Aplica força ao arremessar, levando em consideração a precisão
-                ball.GetComponent<Rigidbody>().AddForce((throwForce * 100) * accuracyFactor);
-                
-                Debug.Log("Throw Direction: " + dragDirection);
-                Debug.Log("Throw Force: " + throwingForce);
-                Debug.Log("Accuracy Factor: " + accuracyFactor);
-            }
+            AtualizarArrastoMouse();
         }
+    }
+
+    void AtualizarArrastoMouse()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            posicaoInicialArrasto = Input.mousePosition;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            posicaoFinalArrasto = Input.mousePosition;
+            RealizarArremesso();
+        }
+    }
+
+    void RealizarArremesso()
+    {
+        segurandoBola = false;
+
+        // Calcular a força com base na distância arrastada
+        float distanciaArrastada = Vector3.Distance(posicaoInicialArrasto, posicaoFinalArrasto);
+        float forcaArremesso = Mathf.Clamp(distanciaArrastada, 0, forcaMaximaArremesso);
+
+        // Calcular a direção do arremesso (horizontal apenas)
+        Vector3 direcaoArremesso = (posicaoFinalArrasto - posicaoInicialArrasto).normalized;
+
+        // Aplicar a força ao rigidbody da bola
+        Rigidbody rigidbodyBola = bola.GetComponent<Rigidbody>();
+        rigidbodyBola.useGravity = true;
+        rigidbodyBola.AddForce(new Vector3(direcaoArremesso.x, 1, direcaoArremesso.y) * forcaArremesso, ForceMode.Impulse);
     }
 }
