@@ -5,6 +5,8 @@ public class AttackerController : MonoBehaviour
     public GameObject bola;
     public bool segurandoBola = true;
     public float forcaMaximaArremesso = 100f;
+    public float fatorInfluenciaArrasto = 1.5f; // Ajuste este valor conforme necessário
+    public float alturaArremesso = 2.0f; // Ajuste este valor para controlar a altura do arremesso
 
     private Vector3 posicaoInicialArrasto;
     private Vector3 posicaoFinalArrasto;
@@ -39,16 +41,16 @@ public class AttackerController : MonoBehaviour
     {
         segurandoBola = false;
 
-        // Calcular a força com base na distância arrastada
+        // Calcular a força com base na distância arrastada, com ajuste de influência
         float distanciaArrastada = Vector3.Distance(posicaoInicialArrasto, posicaoFinalArrasto);
-        float forcaArremesso = Mathf.Clamp(distanciaArrastada, 0, forcaMaximaArremesso);
+        float forcaArremesso = Mathf.Clamp(distanciaArrastada * fatorInfluenciaArrasto, 0, forcaMaximaArremesso);
 
-        // Calcular a direção do arremesso (horizontal apenas)
-        Vector3 direcaoArremesso = (posicaoFinalArrasto - posicaoInicialArrasto).normalized;
+        // Calcular a direção do arremesso sempre para frente no eixo Z, com ajuste para cima no eixo Y
+        Vector3 direcaoArremesso = new Vector3(0, alturaArremesso, 1).normalized;
 
         // Aplicar a força ao rigidbody da bola
         Rigidbody rigidbodyBola = bola.GetComponent<Rigidbody>();
         rigidbodyBola.useGravity = true;
-        rigidbodyBola.AddForce(new Vector3(direcaoArremesso.x, 1, direcaoArremesso.y) * forcaArremesso, ForceMode.Impulse);
+        rigidbodyBola.AddForce(direcaoArremesso * forcaArremesso, ForceMode.Impulse);
     }
 }
