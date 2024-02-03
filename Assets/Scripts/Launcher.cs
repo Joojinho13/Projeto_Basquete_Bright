@@ -5,6 +5,7 @@ using Photon.Pun;
 using TMPro;
 using Photon.Realtime;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class Launcher : MonoBehaviourPunCallbacks
 {
@@ -35,8 +36,9 @@ public class Launcher : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Conectado à Master");
-        PhotonNetwork.JoinLobby();
-        PhotonNetwork.AutomaticallySyncScene = true;
+        SceneManager.LoadScene("Menu");
+        //PhotonNetwork.JoinLobby();
+        //PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public override void OnJoinedLobby()

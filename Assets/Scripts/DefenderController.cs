@@ -1,4 +1,5 @@
 using System.Collections;
+using Photon.Pun;
 using UnityEngine;
 
 public class DefenderController : MonoBehaviour
@@ -7,11 +8,16 @@ public class DefenderController : MonoBehaviour
     public float jumpCooldown = 1f;
     private bool canJump = true;
 
+    private PhotonView view;
     void Update()
     {
-        if (Input.GetMouseButtonDown(1) && canJump)
+        if (view.IsMine)
         {
-            StartCoroutine(Jump());
+            
+         if (Input.GetMouseButtonDown(1) && canJump)
+            {   
+              StartCoroutine(Jump());
+             }
         }
     }
 

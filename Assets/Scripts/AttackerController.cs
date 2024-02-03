@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class AttackerController : MonoBehaviour
@@ -10,17 +11,26 @@ public class AttackerController : MonoBehaviour
 
     private Vector3 posicaoInicialArrasto;
     private Vector3 posicaoFinalArrasto;
+    private PhotonView view;
 
     void Start()
     {
-        bola.GetComponent<Rigidbody>().useGravity = false;
+        view = GetComponent<PhotonView>();
+        if (view.IsMine)
+        {
+          bola.GetComponent<Rigidbody>().useGravity = false;
+        }
     }
 
     void Update()
     {
-        if (segurandoBola)
+        if (view.IsMine)
         {
-            AtualizarArrastoMouse();
+          if (segurandoBola)
+            {
+                AtualizarArrastoMouse();
+            }
+            
         }
     }
 
