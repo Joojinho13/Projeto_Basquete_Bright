@@ -6,8 +6,12 @@ public class AttackerController : MonoBehaviour
     public GameObject bola;
     public bool segurandoBola = true;
     public float forcaMaximaArremesso = 100f;
-    public float fatorInfluenciaArrasto = 1.5f; // Ajuste este valor conforme necessário
-    public float alturaArremesso = 2.0f; // Ajuste este valor para controlar a altura do arremesso
+    public float fatorInfluenciaArrasto = 1.5f; // Ajusta a unfluência do arrasto
+    public float alturaArremesso = 2.0f; // Ajusta a altura do arremesso
+     public bool SegurandoBola()
+    {
+        return segurandoBola;
+    }
 
     private Vector3 posicaoInicialArrasto;
     private Vector3 posicaoFinalArrasto;
@@ -62,5 +66,28 @@ public class AttackerController : MonoBehaviour
         Rigidbody rigidbodyBola = bola.GetComponent<Rigidbody>();
         rigidbodyBola.useGravity = true;
         rigidbodyBola.AddForce(direcaoArremesso * forcaArremesso, ForceMode.Impulse);
+    }
+
+     public void TrocarPapel()
+    {
+        if (view.IsMine)
+        {
+            // Atacante torna-se Defensor
+            view.RPC("RPC_TrocarPapel", RpcTarget.AllBuffered, "Defender");
+        }
+    }
+
+    [PunRPC]
+    void RPC_TrocarPapel(string novoPapel)
+    {
+        if (view.IsMine)
+        {
+            // Desativa o script de Atacante
+            segurandoBola = true; // Pode ajustar conforme necessário
+            GetComponent<AttackerController>().enabled = false;
+
+            // Ativa o script de Defensor
+            GetComponent<DefenderController>().enabled = true;
+        }
     }
 }

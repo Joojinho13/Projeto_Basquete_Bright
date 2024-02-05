@@ -1,24 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Drawing.Inspector.PropertyDrawers;
 using UnityEngine;
+using Photon.Pun;
 
-public class PlayerSpawner : MonoBehaviour
+public class PlayerSpawner : MonoBehaviourPunCallbacks
 {
     public GameObject prefabAtacante;
-
     public GameObject prefabDefensor;
 
-    private CharacterManager manager;
-    // Start is called before the first frame update
     void Start()
     {
-        
-    }
+        // Verifica se este é o jogador local (criado pelo jogador local)
+        if (photonView.IsMine)
+        {
+            // Atribui papéis baseados no número de jogadores na sala
+            int jogadorCount = PhotonNetwork.CurrentRoom.PlayerCount;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            if (jogadorCount == 1)
+            {
+                PhotonNetwork.Instantiate(prefabAtacante.name, transform.position, Quaternion.identity);
+            }
+            else if (jogadorCount == 2)
+            {
+                PhotonNetwork.Instantiate(prefabDefensor.name, transform.position, Quaternion.identity);
+            }
+        }
     }
 }
